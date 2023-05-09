@@ -24,12 +24,12 @@ In order to compile a kernel in any language with an LLVM frontend, we
 ## Example usage
 First, make sure you have the nvptx Rust target installed:
 
-  rustup target add nvptx64-nvidia-cuda
+    rustup target add nvptx64-nvidia-cuda
 
 You also need to compile the cutransform binary:
 
-  cd cutransform
-  cargo build --release
+    cd cutransform
+    cargo build --release
 
 Here is an example Rust kernel:
 ```rust
@@ -52,22 +52,22 @@ pub extern "C" fn kernel(arr: *mut u32) {
 
 To compile the Rust kernel to LLVM bitcode, run:
 
-  rustc -O -C opt-level=3 -o kernel.bc --emit llvm-bc --target nvptx64-nvidia-cuda -C target-cpu=sm_86 -C target-feature=+ptx75 --crate-type lib kernel.rs
+    rustc -O -C opt-level=3 -o kernel.bc --emit llvm-bc --target nvptx64-nvidia-cuda -C target-cpu=sm_86 -C target-feature=+ptx75 --crate-type lib kernel.rs
 
 You can change `sm_86` flag to the minimum supported compute capability of your kernel (8.6 is the newest supported in clang and it's mostly for 30-series cards and onwards).
 Refer to [this Wikipedia page](https://en.wikipedia.org/wiki/CUDA#GPUs_supported) for a list of cards and their supported compute capabilities.
 
 Now, run cutransform on the llvm bitcode
 
-  cutransform/target/release/cutransform kernel.bc
+    cutransform/target/release/cutransform kernel.bc
 
 Finally, compile the new bitcode to PTX:
 
-  llc -O3 -mcpu=sm_86 -mattr=+ptx75 kernel.bc
+    llc -O3 -mcpu=sm_86 -mattr=+ptx75 kernel.bc
 
 Now you can also choose to assemble the PTX for your card:
 
-  ptxas --allow-expensive-optimizations true -o kernel.cubin --gpu-name sm_89 kernel.s
+    ptxas --allow-expensive-optimizations true -o kernel.cubin --gpu-name sm_89 kernel.s
 
 Where you can again change `sm_89` to the compute capability of your card.
 Compute capability 8.9 is for 40-series cards.
