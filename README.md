@@ -1,4 +1,4 @@
-# llvm-cuda-transform
+# cutransform
 Are you tired of having to write your CUDA kernel code in C++?
 This project aims to make it possible to compile CUDA kernels written in any language supported by LLVM without much hassle.
 Specifically, this is basically a transpiler from LLVM-IR to NVVM-IR.
