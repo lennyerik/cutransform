@@ -11,6 +11,7 @@ Maybe we can fix that by using a different approach to the problem of CUDA codeg
 If you're just looking for a simple way to write CUDA in Rust though, you're in luck.
 [cust](https://crates.io/crates/cust) is a really good wrapper around the CUDA API.
 
+
 ## How it works
 In order to compile a kernel in any language with an LLVM frontend, we
 
@@ -21,15 +22,24 @@ In order to compile a kernel in any language with an LLVM frontend, we
 * Finally the bitcode can simply be passed through the llvm-bitcode compiler, llc to generate the PTX assembly
 * (Optional) Additionally can now choose to assemble the PTX to a SASS (cubin) program for your specific graphics card using Nvidia's proprietary ptxas assembler
 
-## Example usage
-First, make sure you have the nvptx Rust target installed:
 
-    rustup target add nvptx64-nvidia-cuda
+# Setup
+You should already have
 
-You also need to compile the cutransform binary:
+* clang
+* llvm
+* cuda
+
+Then compile the cutransform binary:
 
     cd cutransform
     cargo build --release
+
+
+## Rust example usage
+First, make sure you have the nvptx Rust target installed:
+
+    rustup target add nvptx64-nvidia-cuda
 
 Here is an example Rust kernel:
 ```rust
@@ -73,4 +83,40 @@ Where you can again change `sm_89` to the compute capability of your card.
 Compute capability 8.9 is for 40-series cards.
 
 For a complete and integrated example, see the `rust-example` crate included in this repo.
+
+
+## C example usage
+Here is an example C kernel:
+```c
+extern int threadIdxX(void);
+
+void kernel(int *arr) {
+    arr[threadIdxX()] = 123;
+}
+```
+
+**Please note that all kernel functions should have a name starting with the word "kernel". Otherwise they won't be exported.**
+
+To compile the Rust kernel to LLVM bitcode, run:
+
+    clang -cc1 -O3 -triple=nvptx64-nvidia-cuda -target-cpu sm_86 -target-feature +ptx75 -emit-llvm-bc -o kernel.bc kernel.c
+
+Now, run cutransform on the llvm bitcode
+
+    cutransform/target/release/cutransform kernel.bc
+
+Finally, compile the new bitcode to PTX:
+
+    llc -O3 -mcpu=sm_86 -mattr=+ptx75 kernel.bc
+
+Now you can also choose to assemble the PTX for your card:
+
+    ptxas --allow-expensive-optimizations true -o kernel.cubin --gpu-name sm_89 kernel.s
+
+Where you can again change `sm_89` to the compute capability of your card.
+Compute capability 8.9 is for 40-series cards.
+
+For a complete and integrated example, see the `c-example` crate included in this repo.
+The CUDA API code is still in rust, but the kernel is in C.
+If anyone wants to try to use the raw CUDA bindings from C instead, feel free to submit a PR, this just wasn't a priority during development.
 

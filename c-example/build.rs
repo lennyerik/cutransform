@@ -3,30 +3,25 @@ use std::path::Path;
 use std::process::Command;
 
 fn main() -> Result<(), String> {
-    println!("cargo:rerun-if-changed=src/kernel.rs");
+    println!("cargo:rerun-if-changed=src/kernel.c");
 
     let build_dir =
         std::env::var("OUT_DIR").map_err(|_| "Failed to get OUT_DIR environment variable")?;
 
     run_and_check_command(
-        "rustc",
+        "clang",
         &[
-            "-O",
-            "-C",
-            "opt-level=3",
-            "--emit",
-            "llvm-bc",
-            "--target",
-            "nvptx64-nvidia-cuda",
-            "-C",
-            "target-cpu=sm_86",
-            "-C",
-            "target-feature=+ptx75",
-            "--crate-type",
-            "lib",
+            "-cc1",
+            "-O3",
+            "-triple=nvptx64-nvidia-cuda",
+            "-target-cpu",
+            "sm_86",
+            "-target-feature",
+            "+ptx75",
+            "-emit-llvm-bc",
             "-o",
             &format!("{}/kernel.bc", build_dir),
-            "src/kernel.rs",
+            "src/kernel.c",
         ],
     )?;
 
@@ -45,6 +40,10 @@ fn main() -> Result<(), String> {
         ],
     )?;
 
+    // In this example, we compile the ptx to a cubin and embed the cubin in the binary
+    // by writing a temporary rust file containing a u8 array. You could also embed the ptx
+    // directly and compile at runtime using Module::from_ptx for greater compatibility.
+    // This example just showcases what is possible.
     run_and_check_command(
         "ptxas",
         &[
