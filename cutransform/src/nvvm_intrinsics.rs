@@ -112,7 +112,7 @@ fn replace_stub_fn_with_intrinsic(
         let actual_type = func.get_type();
         if actual_type != fn_type {
             return Err(format!(
-                "Intrinsic stub function {} has wrong type! Expected {}, got {}.",
+                "Intrinsic stub function `{}` has wrong type! Expected {}, got {}.",
                 stub_fn_name,
                 fn_type
                     .print_to_string()
