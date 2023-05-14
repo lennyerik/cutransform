@@ -117,6 +117,4 @@ Where you can again change `sm_89` to the compute capability of your card.
 Compute capability 8.9 is for 40-series cards.
 
 For a complete and integrated example, see the `c-example` crate included in this repo.
-The CUDA API code is still in rust, but the kernel is in C.
-If anyone wants to try to use the raw CUDA bindings from C instead, feel free to submit a PR, this just wasn't a priority during development.
 

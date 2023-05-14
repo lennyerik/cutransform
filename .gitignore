@@ -5,6 +5,9 @@ Cargo.lock
 *.s
 *.cubin
 
+c-example/build/
+c-example/c-example
+
 # https://github.com/TheDan64/inkwell/issues/405#issuecomment-1488671372
 clang+llvm-15.0.0-x86_64-linux-gnu-rhel-8.4/
 env.sh
