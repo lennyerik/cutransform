@@ -99,14 +99,16 @@ pub fn replace_stub_functions(module: &Module) -> Result<(), String> {
     Ok(())
 }
 
-fn replace_stub_fn_with_intrinsic(
-    module: &Module,
+fn replace_stub_fn_with_intrinsic<'a>(
+    module: &Module<'a>,
     stub_fn_name: &str,
     instrinsic_name: &str,
-    fn_type: FunctionType,
+    fn_type: FunctionType<'a>,
 ) -> Result<(), String> {
     if let Some(func) = module.get_function(stub_fn_name) {
-        let intrinsic_func = module.add_function(instrinsic_name, func.get_type(), None);
+        let intrinsic_func = module
+            .get_function(instrinsic_name)
+            .unwrap_or_else(|| module.add_function(instrinsic_name, fn_type, None));
 
         // Check the function type
         let actual_type = func.get_type();
