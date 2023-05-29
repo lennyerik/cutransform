@@ -1,5 +1,3 @@
-use std::fs;
-use std::path::Path;
 use std::process::Command;
 
 fn main() -> Result<(), String> {
@@ -57,23 +55,6 @@ fn main() -> Result<(), String> {
             &format!("{}/kernel.s", build_dir),
         ],
     )?;
-
-    let bytes = fs::read(Path::new(&format!("{}/kernel.cubin", build_dir)))
-        .map_err(|_| "Failed to read compiled kernel cubin file")?;
-    let bytes_formatted = bytes
-        .iter()
-        .map(|b| b.to_string())
-        .fold(String::new(), |a, b| a + &b + ", ");
-
-    fs::write(
-        Path::new(&format!("{}/kernel.rs", build_dir)),
-        format!(
-            "pub const KERNEL_COMPILED: [u8; {}] = [{}];",
-            bytes.len(),
-            bytes_formatted
-        ),
-    )
-    .map_err(|_| "Failed to write output kernel.rs file")?;
 
     Ok(())
 }

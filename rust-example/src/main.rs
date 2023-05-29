@@ -1,7 +1,7 @@
 use cust::error::CudaError;
 use cust::prelude::*;
 
-include!(concat!(env!("OUT_DIR"), "/kernel.rs"));
+const KERNEL_COMPILED: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/kernel.cubin"));
 
 fn main() -> Result<(), CudaError> {
     println!("{}", env!("OUT_DIR"));
