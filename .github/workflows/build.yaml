@@ -14,20 +14,60 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v3
+
+        - name: Cache LLVM
+          id: cache-llvm
+          uses: actions/cache@v3
+          with:
+              path: ./llvm
+              key: llvm-15.0
+        - name: Install LLVM
+          uses: KyleMayes/install-llvm-action@v1.8.0
+          with:
+              version: "15.0"
+              cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+
         - name: Build
           working-directory: ./cutransform
+          env:
+              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
           run: cargo build
         - name: Clippy
           working-directory: ./cutransform
+          env:
+              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
           run: cargo clippy
         - name: Formatting
           working-directory: ./cutransform
+          env:
+              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
           run: cargo fmt --check
 
     examples:
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v3
+
+        - uses: Jimver/cuda-toolkit@v0.2.10
+          id: cuda-toolkit
+        - name: Cache LLVM
+          id: cache-llvm
+          uses: actions/cache@v3
+          with:
+              path: ./llvm
+              key: llvm-15.0
+        - name: Install LLVM
+          uses: KyleMayes/install-llvm-action@v1.8.0
+          with:
+              version: "15.0"
+              cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+
+        - name: Compile cutransform
+          working-directory: ./cutransform
+          env:
+              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
+          run: cargo build --release
+
         - name: Rust Build
           working-directory: ./rust-example
           run: cargo build
