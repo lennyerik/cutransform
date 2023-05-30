@@ -68,6 +68,8 @@ jobs:
               LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
           run: cargo build --release
 
+        - name: Install nvptx Rust target
+          run: rustup target add nvptx64-nvidia-cuda
         - name: Rust Build
           working-directory: ./rust-example
           run: cargo build
