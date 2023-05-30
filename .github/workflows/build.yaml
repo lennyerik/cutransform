@@ -50,13 +50,14 @@ jobs:
 
         - uses: Jimver/cuda-toolkit@v0.2.10
           id: cuda-toolkit
+          with:
+              linux-local-args: '["--toolkit"]'
         - name: Cache LLVM
           id: cache-llvm
           uses: actions/cache@v3
           with:
               path: ./llvm
               key: llvm-15.0
-              linux-local-args: '["--toolkit"]'
         - name: Install LLVM
           uses: KyleMayes/install-llvm-action@v1.8.0
           with:
@@ -84,6 +85,6 @@ jobs:
           working-directory: ./c-example
           env:
               C_INCLUDE_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/include:${{ env.C_INCLUDE_PATH }}
-              LD_LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib:${{ env.LD_LIBRARY_PATH }}
+              LD_LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib64/stubs:${{ env.LD_LIBRARY_PATH }}
           run: ./build.sh
 
