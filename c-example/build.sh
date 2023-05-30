@@ -7,4 +7,4 @@ clang -cc1 -Wall -Werror -pedantic -O3 -triple=nvptx64-nvidia-cuda -target-cpu s
 ../cutransform/target/release/cutransform build/kernel.bc
 llc -O3 -mcpu=sm_86 -mattr=+ptx75 build/kernel.bc
 ptxas --allow-expensive-optimizations true --gpu-name sm_89 -o build/kernel.cubin build/kernel.s
-clang -Wall -Werror -pedantic -O3 --std=c17 `pkg-config --libs --cflags cuda` -o c-example main.c
+clang -Wall -Werror -pedantic -O3 --std=c17 `pkg-config --libs --cflags cuda` -lcuda -o c-example main.c
