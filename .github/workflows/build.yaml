@@ -1,0 +1,46 @@
+name: cutransform
+
+on:
+    push:
+        branches: [ "github-workflows" ]
+    pull_request:
+        branches: [ "github-workflows" ]
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3
+        - name: Build
+          working-directory: ./cutransform
+          run: cargo build
+        - name: Clippy
+          working-directory: ./cutransform
+          run: cargo clippy
+        - name: Formatting
+          working-directory: ./cutransform
+          run: cargo fmt --check
+
+    examples:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v3
+        - name: Rust Build
+          working-directory: ./rust-example
+          run: cargo build
+        - name: Rust Clippy
+          working-directory: ./rust-example
+          run: cargo clippy
+        - name: Rust Formatting
+          working-directory: ./rust-example
+          run: cargo fmt --check
+        - name: C Build
+          working-directory: ./c-example
+          run: ./build.sh
+        - name: Zig Build
+          working-directory: ./zig-example
+          run: zig build
+
