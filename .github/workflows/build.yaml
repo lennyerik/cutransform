@@ -56,6 +56,7 @@ jobs:
           with:
               path: ./llvm
               key: llvm-15.0
+              linux-local-args: '["--toolkit"]'
         - name: Install LLVM
           uses: KyleMayes/install-llvm-action@v1.8.0
           with:
@@ -85,10 +86,4 @@ jobs:
               C_INCLUDE_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/include:${{ env.C_INCLUDE_PATH }}
               LD_LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib:${{ env.LD_LIBRARY_PATH }}
           run: ./build.sh
-        - name: Zig Build
-          working-directory: ./zig-example
-          env:
-              C_INCLUDE_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/include:${{ env.C_INCLUDE_PATH }}
-              LD_LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib:${{ env.LD_LIBRARY_PATH }}
-          run: zig build
 
