@@ -85,6 +85,7 @@ jobs:
           working-directory: ./c-example
           env:
               C_INCLUDE_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/include:${{ env.C_INCLUDE_PATH }}
+              LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib64/stubs:${{ env.LD_LIBRARY_PATH }}
               LD_LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib64/stubs:${{ env.LD_LIBRARY_PATH }}
           run: ./build.sh
 
