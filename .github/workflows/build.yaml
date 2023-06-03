@@ -63,6 +63,10 @@ jobs:
           with:
               version: "15.0"
               cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+        - name: Install Zig
+          uses: goto-bus-stop/setup-zig@v2
+          with:
+            version: 0.10.1
 
         - name: Compile cutransform
           working-directory: ./cutransform
@@ -88,4 +92,11 @@ jobs:
               LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib64/stubs:${{ env.LD_LIBRARY_PATH }}
               LD_LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib64/stubs:${{ env.LD_LIBRARY_PATH }}
           run: ./build.sh
+        - name: Zig Build
+          working-directory: ./zig-example
+          env:
+              C_INCLUDE_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/include:${{ env.C_INCLUDE_PATH }}
+              LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib64/stubs:${{ env.LD_LIBRARY_PATH }}
+              LD_LIBRARY_PATH: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/lib64/stubs:${{ env.LD_LIBRARY_PATH }}
+          run: zig build
 
