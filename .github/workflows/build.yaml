@@ -36,7 +36,7 @@ jobs:
           working-directory: ./cutransform
           env:
               LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
-          run: cargo clippy
+          run: cargo clippy -- -Dwarnings
         - name: Formatting
           working-directory: ./cutransform
           env:
@@ -81,7 +81,7 @@ jobs:
           run: cargo build
         - name: Rust Clippy
           working-directory: ./rust-example
-          run: cargo clippy
+          run: cargo clippy -- -Dwarnings
         - name: Rust Formatting
           working-directory: ./rust-example
           run: cargo fmt --check
