@@ -1,15 +1,12 @@
 use inkwell::module::Module;
 
-pub fn replace_external_void_functions(module: &Module) -> Result<(), String> {
+pub fn replace_external_void_functions(module: &Module) {
     for func in module.get_functions() {
         let func_name = func.get_name().to_str().unwrap_or("<Invalid UTF8>");
 
         let returns_void = func.get_type().get_return_type().is_none();
         if func.count_basic_blocks() == 0 && func.get_intrinsic_id() == 0 && returns_void {
-            eprintln!(
-                "Warning: replacing unresolved external function `{}` with noop",
-                func_name
-            );
+            eprintln!("Warning: replacing unresolved external function `{func_name}` with noop");
 
             let ctx = module.get_context();
             let block = ctx.append_basic_block(func, "noop");
@@ -18,6 +15,4 @@ pub fn replace_external_void_functions(module: &Module) -> Result<(), String> {
             builder.build_return(None);
         }
     }
-
-    Ok(())
 }

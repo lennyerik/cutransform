@@ -4,8 +4,6 @@ use cust::prelude::*;
 const KERNEL_COMPILED: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/kernel.cubin"));
 
 fn main() -> Result<(), CudaError> {
-    println!("{}", env!("OUT_DIR"));
-
     // We have to assign the context to an unused variable, because the
     // compiler optimises the function call out otherwise
     let _ctx = cust::quick_init()?;
@@ -26,7 +24,7 @@ fn main() -> Result<(), CudaError> {
     arr.copy_to(&mut host_arr)?;
 
     for (i, value) in host_arr.iter().enumerate() {
-        println!("arr[{}] = {}", i, value);
+        println!("arr[{i}] = {value}");
     }
 
     Ok(())

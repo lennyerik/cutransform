@@ -23,14 +23,14 @@ fn main() -> Result<(), String> {
             "--crate-type",
             "lib",
             "-o",
-            &format!("{}/kernel.bc", build_dir),
+            &format!("{build_dir}/kernel.bc"),
             "src/kernel.rs",
         ],
     )?;
 
     run_and_check_command(
         "../cutransform/target/release/cutransform",
-        &[&format!("{}/kernel.bc", build_dir)],
+        &[&format!("{build_dir}/kernel.bc")],
     )?;
 
     run_and_check_command(
@@ -39,7 +39,7 @@ fn main() -> Result<(), String> {
             "-O3",
             "-mcpu=sm_86",
             "-mattr=+ptx75",
-            &format!("{}/kernel.bc", build_dir),
+            &format!("{build_dir}/kernel.bc"),
         ],
     )?;
 
@@ -51,8 +51,8 @@ fn main() -> Result<(), String> {
             "--gpu-name",
             "sm_89",
             "-o",
-            &format!("{}/kernel.cubin", build_dir),
-            &format!("{}/kernel.s", build_dir),
+            &format!("{build_dir}/kernel.cubin"),
+            &format!("{build_dir}/kernel.s"),
         ],
     )?;
 
@@ -63,11 +63,11 @@ fn run_and_check_command(executable: &str, args: &[&str]) -> Result<(), String> 
     if Command::new(executable)
         .args(args)
         .status()
-        .map_err(|_| format!("Failed to get command status of {}", executable))?
+        .map_err(|_| format!("Failed to get command status of {executable}"))?
         .success()
     {
         Ok(())
     } else {
-        Err(format!("Command {} failed!", executable))
+        Err(format!("Command {executable} failed!"))
     }
 }
