@@ -15,32 +15,17 @@ jobs:
         steps:
         - uses: actions/checkout@v3
 
-        - name: Cache LLVM
-          id: cache-llvm
-          uses: actions/cache@v3
-          with:
-              path: ./llvm
-              key: llvm-15.0
         - name: Install LLVM
-          uses: KyleMayes/install-llvm-action@v1.8.0
-          with:
-              version: "15.0"
-              cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+          run: sudo add-apt-repository -y "deb https://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" && sudo apt-get update && sudo apt-get -y install llvm-15
 
         - name: Build
           working-directory: ./cutransform
-          env:
-              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
-          run: cargo build
+          run: cargo build --features dynamic-llvm
         - name: Clippy
           working-directory: ./cutransform
-          env:
-              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
-          run: cargo clippy -- -Dwarnings -W clippy::pedantic -W clippy::nursery -W clippy::unwrap_used
+          run: cargo clippy --features dynamic-llvm -- -Dwarnings -W clippy::pedantic -W clippy::nursery -W clippy::unwrap_used
         - name: Formatting
           working-directory: ./cutransform
-          env:
-              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
           run: cargo fmt --check
 
     examples:
@@ -52,17 +37,8 @@ jobs:
           id: cuda-toolkit
           with:
               linux-local-args: '["--toolkit"]'
-        - name: Cache LLVM
-          id: cache-llvm
-          uses: actions/cache@v3
-          with:
-              path: ./llvm
-              key: llvm-15.0
         - name: Install LLVM
-          uses: KyleMayes/install-llvm-action@v1.8.0
-          with:
-              version: "15.0"
-              cached: ${{ steps.cache-llvm.outputs.cache-hit }}
+          run: sudo add-apt-repository -y "deb https://apt.llvm.org/focal/ llvm-toolchain-focal-15 main" && sudo apt-get update && sudo apt-get -y install llvm-15
         - name: Install Zig
           uses: goto-bus-stop/setup-zig@v2
           with:
@@ -70,9 +46,7 @@ jobs:
 
         - name: Compile cutransform
           working-directory: ./cutransform
-          env:
-              LLVM_SYS_150_PREFIX: ${{ env.LLVM_PATH }}
-          run: cargo build --release
+          run: cargo build --release --features dynamic-llvm
 
         - name: Install nvptx Rust target
           run: rustup target add nvptx64-nvidia-cuda

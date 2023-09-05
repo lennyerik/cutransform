@@ -5,3 +5,7 @@ edition = "2021"
 
 [dependencies]
 inkwell = { version = "0.2.0", default-features = false, features = ["target-nvptx", "llvm15-0"] }
+llvm-sys = "150.*"
+
+[features]
+dynamic-llvm = ["llvm-sys/prefer-dynamic"]

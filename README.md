@@ -23,7 +23,7 @@ In order to compile a kernel in any language with an LLVM frontend, we
 * (Optional) Additionally can now choose to assemble the PTX to a SASS (cubin) program for your specific graphics card using Nvidia's proprietary ptxas assembler
 
 
-# Setup
+## Setup
 You should already have
 
 * clang
@@ -35,6 +35,13 @@ Then compile the cutransform binary:
     cd cutransform
     cargo build --release
 
+If the build fails with an error message from the `llvm-sys` crate, you likely have a build of LLVM without the static libraries.
+This is the default for newer LLVM binary distributions.
+To build with a dynamically linked LLVM, run:
+
+    cargo build --release --features dynamic-llvm
+
+instead.
 
 ## Rust example usage
 First, make sure you have the nvptx Rust target installed:
