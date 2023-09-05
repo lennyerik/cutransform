@@ -33,9 +33,11 @@ jobs:
         steps:
         - uses: actions/checkout@v3
 
-        - uses: Jimver/cuda-toolkit@v0.2.10
+        - uses: Jimver/cuda-toolkit@v0.2.11
           id: cuda-toolkit
           with:
+              sub-packages: '["nvcc"]'
+              method: 'network'
               linux-local-args: '["--toolkit"]'
         - name: Install LLVM
           run: wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && sudo ./llvm.sh 15
